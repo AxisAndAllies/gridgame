@@ -1,30 +1,7 @@
-// import React from 'react';
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
 import { Client } from "boardgame.io/react";
-import TicTacToeBoard from "./TicTacToeBoard";
+import Board, { BOARD_SIZE } from "./Board";
+
+import "./App.css";
 
 // Return true if `cells` is in a winning configuration.
 function IsVictory(cells) {
@@ -36,8 +13,8 @@ function IsDraw(cells) {
   return cells.filter(c => c === null).length === 0;
 }
 
-const TicTacToe = {
-  setup: () => ({ cells: Array(9).fill(null) }),
+const Main = {
+  setup: () => ({ cells: Array(BOARD_SIZE * BOARD_SIZE).fill(null) }),
 
   moves: {
     clickCell: (G, ctx, id) => {
@@ -57,6 +34,6 @@ const TicTacToe = {
   }
 };
 
-const App = Client({ game: TicTacToe, board: TicTacToeBoard });
+const App = Client({ game: Main, board: Board });
 
 export default App;
