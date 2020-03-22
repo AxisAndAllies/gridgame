@@ -29,6 +29,20 @@
   text-align: center;
   /* transform: rotateX(20); */
 }
+
+#floatingpanel {
+  position: fixed;
+  top: calc(50% - 100px);
+  margin: 20px;
+  padding: 20px;
+  width: 200px;
+  height: 200px;
+  /* border: 1px solid black; */
+  background: hsla(0, 0%, 100%, 0.85);
+  box-shadow: 10px 10px 50px 0px rgba(0, 0, 0, 0.78);
+  border-radius: 5px;
+}
+
 /* .cell:hover {
   border: 1px solid #000;
 } */

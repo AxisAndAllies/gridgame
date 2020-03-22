@@ -13,17 +13,21 @@ function IsDraw(cells) {
   return cells.filter(c => c === null).length === 0;
 }
 
-function getOwnedBy(cells, owner) {
-  return cells.filter(c => c.owner === owner);
-}
-
-function getOccupied(cells) {
-  return cells.filter(c => c.owner);
-}
-
 function getSurrounding(cells, i, j) {
   let id = BOARD_SIZE * i + j;
-  return [id - 1, id + 1, id - i, id + i];
+  let res = [];
+  if (j < BOARD_SIZE - 1) res.push(id + 1);
+  if (j > 0) res.push(id - 1);
+  if (i > 0) res.push(id - i);
+  if (i < BOARD_SIZE - 1) res.push(id + i);
+  console.log(i, j, res);
+  return res;
+  // return [id - 1, id + 1, id - i, id + i];
+}
+
+function tickCells(cells) {
+  if (cells) cells.filter(c => c && c.owner).map(c => (c.strength += 1));
+  return cells;
 }
 
 const Main = {
@@ -33,6 +37,7 @@ const Main = {
     attack: (G, ctx, id) => {
       if (G.cells[id] === null) {
         G.cells[id] = {
+          ...G.cells[id],
           owner: ctx.currentPlayer
         };
       }
@@ -41,10 +46,13 @@ const Main = {
     reinforce: (G, ctx, id) => {
       if (G.cells[id] === null) {
         G.cells[id] = {
+          ...G.cells[id],
           owner: ctx.currentPlayer,
           strength: 10
         };
       }
+      G.cells = tickCells(G.cells, id / BOARD_SIZE);
+      getSurrounding(G.cells);
       // G.endStage();
     }
   },

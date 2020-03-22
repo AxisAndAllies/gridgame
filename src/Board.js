@@ -1,41 +1,15 @@
 import React from "react";
+import Cell from "./Cell";
 
-export const BOARD_SIZE = 100;
+export const BOARD_SIZE = 60;
 
-let _cell = ({ id, cell, onClick }) => {
-  let owner = cell?.owner;
-  const CELL_SIZE = 30;
+function getOwnedBy(cells, owner) {
+  return cells.filter(c => c && c.owner === owner);
+}
 
-  const cellStyle = owner => ({
-    width: `${CELL_SIZE}px`,
-    minWidth: `${CELL_SIZE}px`,
-    height: `${CELL_SIZE}px`,
-    lineHeight: `${CELL_SIZE}px`,
-    maxWidth: `${CELL_SIZE}px`,
-    left: `${CELL_SIZE * (id % BOARD_SIZE)}px`,
-    top: `${CELL_SIZE * Math.floor(id / BOARD_SIZE)}px`,
-    background: owner == null ? null : owner == 1 ? "tomato" : "steelblue" // https://www.w3schools.com/colors/colors_names.asp
-  });
-  // console.log(CELL_SIZE * (id % BOARD_SIZE), (CELL_SIZE * id) / BOARD_SIZE);
-
-  return (
-    <td
-      className="cell"
-      style={cellStyle(owner)}
-      key={id}
-      onClick={() => onClick(id)}
-    >
-      {cell?.strength}
-    </td>
-  );
-};
-
-let Cell = React.memo(
-  _cell,
-  (prevProps, nextProps) =>
-    prevProps.id == nextProps.id &&
-    JSON.stringify(prevProps.cell) == JSON.stringify(nextProps.cell)
-);
+function getOccupied(cells) {
+  return cells.filter(c => c);
+}
 
 class Board extends React.Component {
   onClick(id) {
@@ -77,35 +51,55 @@ class Board extends React.Component {
           <div id="winner">Draw!</div>
         );
     }
-
     return (
-      <div id="container">
-        <table id="board">
-          <tbody>
-            {Array(BOARD_SIZE)
-              .fill()
-              .map((_, i) => (
-                <tr key={i}>
-                  {Array(BOARD_SIZE)
-                    .fill()
-                    .map((_, j) => {
-                      const id = BOARD_SIZE * i + j;
-                      const cell = this.props.G.cells[id];
-                      return (
-                        <Cell
-                          key={id}
-                          cell={cell}
-                          id={id}
-                          onClick={this.onClick.bind(this)}
-                        />
-                      );
-                    })}
-                </tr>
-              ))}
-          </tbody>
-        </table>
-        {winner}
-      </div>
+      <React.Fragment>
+        <div id="container">
+          <table id="board">
+            <tbody>
+              {Array(BOARD_SIZE)
+                .fill()
+                .map((_, i) => (
+                  <tr key={i}>
+                    {Array(BOARD_SIZE)
+                      .fill()
+                      .map((_, j) => {
+                        const id = BOARD_SIZE * i + j;
+                        const cell = this.props.G.cells[id];
+                        return (
+                          <Cell
+                            key={id}
+                            cell={cell}
+                            id={id}
+                            onClick={this.onClick.bind(this)}
+                          />
+                        );
+                      })}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+          {winner}
+        </div>
+        <div id="floatingpanel">
+          <pre>
+            {(() => {
+              let cells = this.props.G.cells;
+              let cur = this.props.ctx.currentPlayer;
+              let sumStrength = cells =>
+                cells.reduce((a, v) => a + v.strength, 0);
+              let a = sumStrength(getOwnedBy(cells, cur));
+              return JSON.stringify(
+                {
+                  player: a,
+                  enemy: sumStrength(getOccupied(cells)) - a
+                },
+                undefined,
+                2
+              );
+            })()}
+          </pre>
+        </div>
+      </React.Fragment>
     );
   }
 }
