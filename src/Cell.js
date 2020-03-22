@@ -10,7 +10,7 @@ let _cell = ({ id, cell, onClick }) => {
   if (cell) {
     let s = cell.strength;
     opacity = Math.max(0.1, Math.log2(s - 10) / 12);
-    console.log(opacity);
+    // console.log(opacity);
   }
 
   const cellStyle = owner => ({

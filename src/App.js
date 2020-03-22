@@ -18,11 +18,10 @@ function getSurrounding(cells, i, j) {
   let res = [];
   if (j < BOARD_SIZE - 1) res.push(id + 1);
   if (j > 0) res.push(id - 1);
-  if (i > 0) res.push(id - i);
-  if (i < BOARD_SIZE - 1) res.push(id + i);
+  if (i > 0) res.push(id - BOARD_SIZE);
+  if (i < BOARD_SIZE - 1) res.push(id + BOARD_SIZE);
   console.log(i, j, res);
   return res;
-  // return [id - 1, id + 1, id - i, id + i];
 }
 
 function tickCells(cells) {
@@ -30,62 +29,49 @@ function tickCells(cells) {
   return cells;
 }
 
-const Main = {
-  setup: () => ({ cells: Array(BOARD_SIZE * BOARD_SIZE).fill(null) }),
+const GameMoves = {
+  attack: (G, ctx, id) => {
+    G.cells[id] = {
+      ...G.cells[id],
+      owner: ctx.currentPlayer
+    };
+    ctx.events.endStage();
+  },
+  reinforce: (G, ctx, id) => {
+    if (G.cells[id] === null) {
+      G.cells[id] = {
+        ...G.cells[id],
+        owner: ctx.currentPlayer,
+        strength: 10
+      };
+    } else if (G.cells[id].owner === ctx.currentPlayer) {
+      G.cells[id].strength += 10;
+    }
+    G.cells = tickCells(G.cells, id / BOARD_SIZE);
+    getSurrounding(G.cells, Math.floor(id / BOARD_SIZE), id % BOARD_SIZE);
+    ctx.events.endStage();
+  }
+};
 
-  moves: {
-    attack: (G, ctx, id) => {
-      if (G.cells[id] === null) {
-        G.cells[id] = {
-          ...G.cells[id],
-          owner: ctx.currentPlayer
-        };
+const Main = {
+  setup: () => ({
+    cells: Array(BOARD_SIZE * BOARD_SIZE).fill(null),
+    selectedCell: null
+  }),
+
+  moves: GameMoves,
+
+  turn: {
+    stages: {
+      reinforce: {
+        moves: GameMoves.reinforce,
+        next: "attack"
+      },
+      attack: {
+        moves: GameMoves.attack
       }
-      // G.endStage();
-    },
-    reinforce: (G, ctx, id) => {
-      if (G.cells[id] === null) {
-        G.cells[id] = {
-          ...G.cells[id],
-          owner: ctx.currentPlayer,
-          strength: 10
-        };
-      }
-      G.cells = tickCells(G.cells, id / BOARD_SIZE);
-      getSurrounding(G.cells);
-      // G.endStage();
     }
   },
-
-  // turn: {
-  //   stages: {
-  //     reinforce: {
-  //       moves: {
-  //         reinforce: (G, ctx, id) => {
-  //           if (G.cells[id] === null) {
-  //             G.cells[id] = {
-  //               owner: ctx.currentPlayer
-  //             };
-  //           }
-  //           G.endStage();
-  //         }
-  //       },
-  //       next: "attack"
-  //     },
-  //     attack: {
-  //       moves: {
-  //         attack: (G, ctx, id) => {
-  //           if (G.cells[id] === null) {
-  //             G.cells[id] = {
-  //               owner: ctx.currentPlayer
-  //             };
-  //           }
-  //           G.endStage();
-  //         }
-  //       }
-  //     }
-  //   }
-  // },
 
   endIf: (G, ctx) => {
     if (IsVictory(G.cells)) {

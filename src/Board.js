@@ -13,16 +13,24 @@ function getOccupied(cells) {
 
 class Board extends React.Component {
   onClick(id) {
-    if (this.isActive(id)) {
+    if (this.isEmpty(id)) {
       this.props.moves.reinforce(id);
-      this.props.events.endTurn();
+    } else if (this.isEnemy(id)) {
+      this.props.moves.attack(id);
+    } else {
+      console.log("**************Invalid click action.");
     }
+
+    this.props.events.endStage();
   }
 
-  isActive(id) {
-    if (!this.props.isActive) return false;
-    if (this.props.G.cells[id] !== null) return false;
-    return true;
+  isEmpty(id) {
+    // return this.props.isActive &&
+    return this.props.G.cells[id] === null;
+  }
+  isEnemy(id) {
+    if (this.isEmpty(id)) return false;
+    return this.props.G.cells[id].owner !== this.props.ctx.currentPlayer;
   }
 
   cells() {
