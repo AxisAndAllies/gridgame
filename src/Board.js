@@ -1,6 +1,31 @@
 import React from "react";
 
-export const BOARD_SIZE = 90;
+export const BOARD_SIZE = 50;
+
+let Cell = ({ id, owner, onClick }) => {
+  const CELL_SIZE = 20;
+
+  const cellStyle = owner => ({
+    width: `${CELL_SIZE}px`,
+    height: `${CELL_SIZE}px`,
+    lineHeight: `${CELL_SIZE}px`,
+    maxWidth: `${CELL_SIZE}px`,
+    overflow: "hidden",
+    textAlign: "center",
+    background: owner == null ? null : owner == 1 ? "tomato" : "steelblue" // https://www.w3schools.com/colors/colors_names.asp
+  });
+
+  return (
+    <td
+      className="cell"
+      style={cellStyle(owner)}
+      key={id}
+      onClick={() => onClick(id)}
+    >
+      {owner}
+    </td>
+  );
+};
 
 class Board extends React.Component {
   onClick(id) {
@@ -31,39 +56,26 @@ class Board extends React.Component {
         );
     }
 
-    const CELL_SIZE = 20;
-
-    const cellStyle = owner => ({
-      width: `${CELL_SIZE}px`,
-      height: `${CELL_SIZE}px`,
-      lineHeight: `${CELL_SIZE}px`,
-      maxWidth: `${CELL_SIZE}px`,
-      overflow: "hidden",
-      textAlign: "center",
-      background: owner == null ? null : owner == 1 ? "tomato" : "steelblue" // https://www.w3schools.com/colors/colors_names.asp
-    });
-
-    let tbody = [];
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      let cells = [];
-      for (let j = 0; j < BOARD_SIZE; j++) {
-        const id = BOARD_SIZE * i + j;
-
-        const owner = this.props.G.cells[id]?.owner;
-
-        cells.push(
-          <td
-            className="cell"
-            style={cellStyle(owner)}
-            key={id}
-            onClick={() => this.onClick(id)}
-          >
-            {owner}
-          </td>
-        );
-      }
-      tbody.push(<tr key={i}>{cells}</tr>);
-    }
+    let tbody = Array(BOARD_SIZE)
+      .fill()
+      .map((_, i) => (
+        <tr key={i}>
+          {Array(BOARD_SIZE)
+            .fill()
+            .map((_, j) => {
+              const id = BOARD_SIZE * i + j;
+              const owner = this.props.G.cells[id]?.owner;
+              return (
+                <Cell
+                  key={id}
+                  owner={owner}
+                  id={id}
+                  onClick={this.onClick.bind(this)}
+                />
+              );
+            })}
+        </tr>
+      ));
 
     return (
       <div>
