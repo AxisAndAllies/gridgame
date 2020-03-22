@@ -5,7 +5,7 @@ export const BOARD_SIZE = 90;
 class Board extends React.Component {
   onClick(id) {
     if (this.isActive(id)) {
-      this.props.moves.clickCell(id);
+      this.props.moves.reinforce(id);
       this.props.events.endTurn();
     }
   }
@@ -31,10 +31,9 @@ class Board extends React.Component {
         );
     }
 
-    const CELL_SIZE = 40;
+    const CELL_SIZE = 20;
 
     const cellStyle = owner => ({
-      border: "1px solid #555",
       width: `${CELL_SIZE}px`,
       height: `${CELL_SIZE}px`,
       lineHeight: `${CELL_SIZE}px`,
@@ -54,6 +53,7 @@ class Board extends React.Component {
 
         cells.push(
           <td
+            className="cell"
             style={cellStyle(owner)}
             key={id}
             onClick={() => this.onClick(id)}

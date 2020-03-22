@@ -36,7 +36,7 @@ const Main = {
           owner: ctx.currentPlayer
         };
       }
-      G.endStage();
+      // G.endStage();
     },
     reinforce: (G, ctx, id) => {
       if (G.cells[id] === null) {
@@ -45,39 +45,39 @@ const Main = {
           strength: 10
         };
       }
-      G.endStage();
+      // G.endStage();
     }
   },
 
-  turn: {
-    stages: {
-      reinforce: {
-        moves: {
-          reinforce: (G, ctx, id) => {
-            if (G.cells[id] === null) {
-              G.cells[id] = {
-                owner: ctx.currentPlayer
-              };
-            }
-            G.endStage();
-          }
-        },
-        next: "attack"
-      },
-      attack: {
-        moves: {
-          attack: (G, ctx, id) => {
-            if (G.cells[id] === null) {
-              G.cells[id] = {
-                owner: ctx.currentPlayer
-              };
-            }
-            G.endStage();
-          }
-        }
-      }
-    }
-  },
+  // turn: {
+  //   stages: {
+  //     reinforce: {
+  //       moves: {
+  //         reinforce: (G, ctx, id) => {
+  //           if (G.cells[id] === null) {
+  //             G.cells[id] = {
+  //               owner: ctx.currentPlayer
+  //             };
+  //           }
+  //           G.endStage();
+  //         }
+  //       },
+  //       next: "attack"
+  //     },
+  //     attack: {
+  //       moves: {
+  //         attack: (G, ctx, id) => {
+  //           if (G.cells[id] === null) {
+  //             G.cells[id] = {
+  //               owner: ctx.currentPlayer
+  //             };
+  //           }
+  //           G.endStage();
+  //         }
+  //       }
+  //     }
+  //   }
+  // },
 
   endIf: (G, ctx) => {
     if (IsVictory(G.cells)) {

@@ -4,6 +4,15 @@
 #board {
   user-select: none;
   width: 100%;
-  /* border-collapse: collapse; */
+  height: 100%;
+  border-collapse: collapse;
   table-layout: fixed;
+  cursor: none;
+}
+.cell {
+  border: 1px solid #ccc;
+}
+.cell:hover {
+  /* background-color: bisque; */
+  border: 2px solid #000;
 }
